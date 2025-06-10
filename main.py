@@ -24,12 +24,12 @@ for col in ['Ast/TO', 'Stl/TO']:
         df[col] = pd.to_numeric(df[col], errors='coerce')
         df[col].replace([np.inf, -np.inf], np.nan, inplace=True)
 
-columnas_porcentaje = ['FG%', '3P%', 'FT%', 'TS%', 'eFG%', 'ORB%', 'DRB%', 'TRB%', 'AST%',
-                       'TOV%', 'STL%', 'BLK%', 'USG%', 'Win %']
+columnas_porcentaje = ['FG%', '3P%', 'FT%', 'TS%', 'eFG%', 'ORB%', 'DRB%', 'TRB%', 'AST%', 'TOV%', 'STL%', 'BLK%', 'USG%']
+
 for col in columnas_porcentaje:
     if col in df.columns:
-        df[col] = df[col].astype(str).str.rstrip('%').replace('', np.nan)
-        df[col] = pd.to_numeric(df[col], errors='coerce') / 100
+        df[col] = pd.to_numeric(df[col], errors='coerce')  # Solo convertir a float, no dividir
+
 
 # FILTROS EN SIDEBAR
 st.sidebar.title("Configuración")
@@ -95,7 +95,12 @@ tabs = st.tabs([
 
 # TAB 1: Clusters
 tabs[0].subheader("Jugadores por Cluster")
-tabs[0].dataframe(df_clustered[['Player', 'Team_completo', 'Pos'] + variables + ['Cluster']])
+formato = {col: "{:.3f}" for col in ['FG%', '3P%', 'FT%', 'TS%', 'eFG%', 'ORB%', 'DRB%', 'TRB%', 'AST%', 'TOV%', 'STL%', 'BLK%', 'USG%'] if col in df_clustered.columns}
+
+tabs[0].dataframe(
+    df_clustered[['Player', 'Team_completo', 'Pos'] + variables + ['Cluster']].style.format(formato)
+)
+
 
 fig = px.scatter(
     df_clustered,
