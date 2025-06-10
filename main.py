@@ -196,21 +196,38 @@ for cluster_id in sorted(df_clustered['Cluster'].unique()):
     tabs[3].dataframe(top5[['Player', 'Team_completo', 'Pos', 'DistanciaCentroide'] + variables])
 
 # TAB 5: Jugadores Similares
-if mostrar_similares:
-    tabs[4].subheader("Buscar jugadores similares")
-    jugador_sel = tabs[4].selectbox("Selecciona jugador", df_clustered['Player'].sort_values())
-    jugador_data = df_clustered[df_clustered['Player'] == jugador_sel].iloc[0]
-    cluster_jugador = jugador_data['Cluster']
+tabs[4].subheader("Jugadores Similares")
+
+jugador_sel = st.sidebar.selectbox("Selecciona un jugador para informe y similares", df_clustered['Player'].unique())
+jugador_data = df_clustered[df_clustered['Player'] == jugador_sel]
+
+if not jugador_data.empty:
+    cluster_jugador = jugador_data['Cluster'].values[0]
     subset = df_clustered[df_clustered['Cluster'] == cluster_jugador]
+
     if len(subset) > 1:
-        distancias = np.linalg.norm(subset[variables].values - jugador_data[variables].values, axis=1)
-        subset = subset.copy()
-        subset['DistJugador'] = distancias
-        similares = subset.sort_values('DistJugador').iloc[1:6]
+        # Limpiar NaNs para las variables usadas
+        subset_clean = subset.dropna(subset=variables)
+
+        # Vector del jugador seleccionado (forma 2D)
+        jugador_vector = jugador_data[variables].values.reshape(1, -1)
+
+        # Calcular distancia Euclídea
+        distancias = np.linalg.norm(subset_clean[variables].values - jugador_vector, axis=1)
+
+        subset_clean = subset_clean.copy()
+        subset_clean['DistJugador'] = distancias
+
+        # Excluir el mismo jugador (distancia 0)
+        similares = subset_clean.sort_values('DistJugador').iloc[1:6]
+
         tabs[4].write(f"Jugadores similares a **{jugador_sel}** en Cluster {cluster_jugador}:")
-        tabs[4].dataframe(similares[['Player', 'Team_completo', 'Pos', 'DistJugador'] + variables])
+        cols_mostrar = ['Player', 'Team_completo', 'Pos', 'DistJugador'] + variables
+        tabs[4].dataframe(similares[cols_mostrar])
     else:
         tabs[4].write("No hay suficientes jugadores en el cluster para comparar.")
+else:
+    tabs[4].write("Jugador seleccionado no encontrado.")
 
 # TAB 6: Correlaciones
 if mostrar_corr:
