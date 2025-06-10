@@ -95,10 +95,13 @@ tabs = st.tabs([
 
 # TAB 1: Clusters
 tabs[0].subheader("Jugadores por Cluster")
-formato = {col: "{:.3f}" for col in ['FG%', '3P%', 'FT%', 'TS%', 'eFG%', 'ORB%', 'DRB%', 'TRB%', 'AST%', 'TOV%', 'STL%', 'BLK%', 'USG%'] if col in df_clustered.columns}
+df_display = df_clustered.copy()
+for col in formato.keys():
+    if col in df_display.columns:
+        df_display[col] = df_display[col] * 100
 
 tabs[0].dataframe(
-    df_clustered[['Player', 'Team_completo', 'Pos'] + variables + ['Cluster']].style.format(formato)
+    df_display[['Player', 'Team_completo', 'Pos'] + variables + ['Cluster']].style.format(formato)
 )
 
 
