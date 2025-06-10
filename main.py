@@ -96,7 +96,8 @@ tabs = st.tabs([
 # TAB 1: Clusters
 tabs[0].subheader("Jugadores por Cluster")
 tabs[0].dataframe(
-    df_display[['Player', 'Team_completo', 'Pos'] + variables])
+    df_clustered[['Player', 'Team_completo', 'Pos'] + variables])
+
 
 
 fig = px.scatter(
