@@ -95,6 +95,8 @@ tabs = st.tabs([
 
 # TAB 1: Clusters
 tabs[0].subheader("Jugadores por Cluster")
+formato = {col: "{:.1f}%" for col in ['FG%', '3P%', 'FT%', 'TS%', 'eFG%', 'ORB%', 'DRB%', 'TRB%', 'AST%', 'TOV%', 'STL%', 'BLK%', 'USG%'] if col in df_clustered.columns}
+
 df_display = df_clustered.copy()
 for col in formato.keys():
     if col in df_display.columns:
@@ -103,6 +105,7 @@ for col in formato.keys():
 tabs[0].dataframe(
     df_display[['Player', 'Team_completo', 'Pos'] + variables + ['Cluster']].style.format(formato)
 )
+
 
 
 fig = px.scatter(
