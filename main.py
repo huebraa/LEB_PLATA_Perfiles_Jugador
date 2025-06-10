@@ -13,7 +13,7 @@ import seaborn as sns
 from scipy.stats import percentileofscore
 
 # --- CONFIGURACION INICIAL ---
-st.set_page_config(layout="wide", page_title="Perfiles Jugadoras - Segunda FEB")
+st.set_page_config(layout="wide", page_title="Perfiles Jugadores - Segunda FEB")
 
 # --- CARGA DE DATOS ---
 df = pd.read_csv("estadisticas_segunda_feb_2025.csv")
@@ -52,7 +52,7 @@ k = st.sidebar.slider("Número de clusters", 2, 10, 3)
 
 mostrar_radar = st.sidebar.checkbox("Mostrar Radar Charts", True)
 mostrar_dendros = st.sidebar.checkbox("Mostrar Dendrogramas", True)
-mostrar_similares = st.sidebar.checkbox("Mostrar Jugadoras Similares", True)
+mostrar_similares = st.sidebar.checkbox("Mostrar Jugadores Similares", True)
 mostrar_corr = st.sidebar.checkbox("Mostrar Correlaciones", True)
 
 # PROCESAMIENTO
@@ -94,7 +94,7 @@ tabs = st.tabs([
 ])
 
 # TAB 1: Clusters
-tabs[0].subheader("Jugadoras por Cluster")
+tabs[0].subheader("Jugadores por Cluster")
 tabs[0].dataframe(df_clustered[['Player', 'Team_completo', 'Pos'] + variables + ['Cluster']])
 
 fig = px.scatter(
@@ -103,7 +103,7 @@ fig = px.scatter(
     y='PCA2',
     color=df_clustered['Cluster'].astype(str),
     hover_data=['Player', 'Team_completo', 'Pos'],
-    title="PCA 2D - Clustering de Jugadoras",
+    title="PCA 2D - Clustering de Jugadores",
     color_discrete_sequence=px.colors.qualitative.Set1,
 )
 fig.update_traces(marker=dict(size=10, line=dict(width=1, color='DarkSlateGrey')))
@@ -157,8 +157,8 @@ if mostrar_radar:
         ax.set_yticklabels([])
         tabs[2].pyplot(fig)
 
-# TAB 4: Jugadoras más alejadas del centroide
-tabs[3].subheader("Jugadoras más alejadas del centroide")
+# TAB 4: Jugadores más alejadas del centroide
+tabs[3].subheader("Jugadores más alejadas del centroide")
 for cluster_id in sorted(df_clustered['Cluster'].unique()):
     subset = df_clustered[df_clustered['Cluster'] == cluster_id]
     if len(subset) <= 2:
@@ -172,7 +172,7 @@ for cluster_id in sorted(df_clustered['Cluster'].unique()):
     tabs[3].write(f"**Cluster {cluster_id}**")
     tabs[3].dataframe(top5[['Player', 'DistanciaCentroide']])
 
-# TAB 5: Jugadoras similares
+# TAB 5: Jugadores similares
 if mostrar_similares:
     jugador = tabs[4].selectbox("Selecciona una jugadora", df_clustered['Player'].unique())
     if tabs[4].button("Buscar similares"):
